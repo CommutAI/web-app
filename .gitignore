@@ -9,3 +9,4 @@ dist
 .vscode/
 apps/*/node_modules
 packages/*/node_modules
+!.env.example
