@@ -12,7 +12,7 @@
     "dev:web": "cd apps/web && npm run dev",
     "dev:conductor": "cd apps/conductor-web && npm run dev",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:conductor\"",
-    "build": "cd apps/web && npm run build",
+    "build": "npm --prefix apps/web run build",
     "test": "turbo test",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

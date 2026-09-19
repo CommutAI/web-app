@@ -52,30 +52,42 @@ export async function getCurrentUser() {
   return { user, staff: staffData as StaffUser }
 }
 
-export function useAuth() {
+// ─── Shared Auth Context ────────────────────────────────────────────────────
+// Fetches the current user ONCE and shares it across all consumers.
+// Without this, every ProtectedRoute mount fires its own getUser() network
+// request and starts with loading=true, causing a brief redirect to /login.
+
+interface AuthContextValue {
+  user: { user: any; staff: StaffUser } | null
+  loading: boolean
+}
+
+const AuthContext = React.createContext<AuthContextValue>({ user: null, loading: true })
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<{ user: any; staff: StaffUser } | null>(null)
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     let isMounted = true
-    
+
     getCurrentUser().then((result) => {
       if (isMounted) {
         setUser(result)
         setLoading(false)
       }
     }).catch((error) => {
-      console.error('Error getting current user:', error)
+      console.error('[AuthProvider] Error getting current user:', error)
       if (isMounted) {
         setUser(null)
         setLoading(false)
       }
     })
-    
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event: any, session: any) => {
         if (!isMounted) return
-        
+
         if (session?.user) {
           try {
             const result = await getCurrentUser()
@@ -84,8 +96,7 @@ export function useAuth() {
               setLoading(false)
             }
           } catch (error) {
-            console.error('Error getting user on auth state change:', error)
-            // Don't clear user on temporary errors - only on explicit sign out
+            console.error('[AuthProvider] Error getting user on auth state change:', error)
             if (_event === 'SIGNED_OUT' && isMounted) {
               setUser(null)
               setLoading(false)
@@ -106,7 +117,17 @@ export function useAuth() {
     }
   }, [])
 
-  return { user, loading, signOut }
+  return (
+    <AuthContext.Provider value={{ user, loading }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+// ─── useAuth ────────────────────────────────────────────────────────────────
+// Reads from the shared AuthContext. Must be used inside <AuthProvider>.
+export function useAuth() {
+  return React.useContext(AuthContext)
 }
 
 export function hasRole(user: StaffUser | null, role: StaffUser['role']): boolean {
