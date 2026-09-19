@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "CommutAI Transportation Management System",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "cd apps/web && npm run dev",
     "dev:web": "cd apps/web && npm run dev",
@@ -28,32 +32,10 @@
   },
   "packageManager": "npm@10.0.0",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
-    "@tanstack/react-query": "^5.101.2",
-    "autoprefixer": "^10.5.3",
-    "axios": "^1.18.1",
-    "clsx": "^2.1.1",
-    "dotenv": "^17.4.2",
-    "framer-motion": "^11.0.0",
-    "html5-qrcode": "^2.3.8",
-    "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.8",
-    "leaflet": "^1.9.4",
-    "lucide-react": "^1.28.0",
-    "maplibre-gl": "^6.9.0",
-    "postcss": "^8.5.19",
-    "qrcode.react": "^4.2.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-hot-toast": "^2.4.1",
-    "react-leaflet": "^5.0.0",
-    "react-router-dom": "^6.26.1",
-    "recharts": "^3.10.1",
-    "tailwind-merge": "^3.6.0",
-    "tailwindcss": "^3.4.19",
-    "xlsx": "^0.18.5"
+    "dotenv": "^17.4.2"
   }
 }

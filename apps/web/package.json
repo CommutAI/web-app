@@ -10,10 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@commutai/auth": "../packages/auth",
-    "@commutai/supabase": "../packages/supabase",
-    "@commutai/types": "../packages/types",
-    "@commutai/ui": "../packages/ui",
+    "@commutai/auth": "../../packages/auth",
+    "@commutai/supabase": "../../packages/supabase",
+    "@commutai/types": "../../packages/types",
+    "@commutai/ui": "../../packages/ui",
     "@supabase/supabase-js": "^2.49.4",
     "@tanstack/react-query": "^5.101.2",
     "autoprefixer": "^10.5.3",
