@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CreditCard, Ticket, Plus, Search, Edit, X, HeadphonesIcon, TrendingUp } from 'lucide-react';
-import { supabaseAdmin } from "@commutai/supabase";
+import { supabase } from "@commutai/supabase";
 import AuditService from "../../services/auditService";
 
 interface QrCard {
@@ -89,7 +89,7 @@ const CardManagement = () => {
   };
 
   const fetchQrCards = async () => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from('qr_cards')
       .select('*, issuer:staff_users!issued_by(*)')
       .order('created_at', { ascending: false });
@@ -98,7 +98,7 @@ const CardManagement = () => {
   };
 
   const fetchTempTickets = async () => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from('temporary_tickets')
       .select('*, issuer:staff_users!issued_by(*), trips(*, buses(*))')
       .order('issued_at', { ascending: false });
@@ -107,7 +107,7 @@ const CardManagement = () => {
   };
 
   const fetchCustomerServiceLogs = async () => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from('customer_service_logs')
       .select('*, trips(*, buses(*)), handler:staff_users!handled_by(*)')
       .order('created_at', { ascending: false });
@@ -209,7 +209,7 @@ const CardManagement = () => {
     if (!confirm(`Are you sure you want to delete QR card ${card.card_uid}?`)) return;
     
     try {
-      const { error } = await supabaseAdmin
+      const { error } = await supabase
         .from('qr_cards')
         .delete()
         .eq('id', card.id);
@@ -242,7 +242,7 @@ const CardManagement = () => {
     if (!confirm(`Are you sure you want to delete temporary ticket ${ticket.ticket_uid}?`)) return;
     
     try {
-      const { error } = await supabaseAdmin
+      const { error } = await supabase
         .from('temporary_tickets')
         .delete()
         .eq('id', ticket.id);
