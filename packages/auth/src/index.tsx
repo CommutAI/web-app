@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { supabase } from '@commutai/supabase'
-import type { Database } from '@commutai/types'
+import type { Database } from '@commutai/supabase'
 
 type StaffUser = Database['public']['Tables']['staff_users']['Row']
 

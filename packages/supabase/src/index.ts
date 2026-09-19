@@ -34,6 +34,35 @@ export type Database = {
           created_at?: string;
         };
       };
+      staff_users: {
+        Row: {
+          id: string;
+          email: string;
+          name: string;
+          role: 'admin' | 'operator' | 'driver' | 'conductor' | 'customer-service';
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          name: string;
+          role: 'admin' | 'operator' | 'driver' | 'conductor' | 'customer-service';
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          name?: string;
+          role?: 'admin' | 'operator' | 'driver' | 'conductor' | 'customer-service';
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       buses: {
         Row: {
           id: string;
