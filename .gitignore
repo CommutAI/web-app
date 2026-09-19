@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+.env.local
+.env.*.local
+*.log
+.tsbuildinfo
+.DS_Store
+.vscode/
+apps/*/node_modules
+packages/*/node_modules
