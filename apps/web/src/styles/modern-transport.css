@@ -2721,9 +2721,6 @@ p, h1, h2, h3, h4, h5, h6, span, div, button, a {
   background-clip: text;
 }
 
-.backdrop-blur {
-}
-
 .glass-effect {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
