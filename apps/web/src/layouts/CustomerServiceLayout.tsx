@@ -34,12 +34,19 @@ const navigation: NavItem[] = [
 
 const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (value: boolean) => void }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   const isItemActive = (path: string) => {
     if (path === '.') {
       return location.pathname === '/customer-service' || location.pathname === '/customer-service/';
     }
     return location.pathname === `/customer-service/${path}`;
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login');
   };
 
   return (
@@ -73,7 +80,7 @@ const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (value: bo
           </button>
         </div>
 
-        <nav className="p-4 space-y-2 overflow-y-auto max-h-[calc(100vh-80px)]">
+        <nav className="p-4 space-y-2 overflow-y-auto max-h-[calc(100vh-160px)]">
           {navigation.map((item) => {
             const Icon = item.icon;
             const isActive = isItemActive(item.href);
@@ -97,19 +104,23 @@ const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (value: bo
             );
           })}
         </nav>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+          >
+            <LogOut size={20} />
+            {isOpen && <span className="font-medium">Logout</span>}
+          </button>
+        </div>
       </aside>
     </>
   );
 };
 
 const Header = () => {
-  const navigate = useNavigate();
-  const { user, signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/login');
-  };
+  const { user } = useAuth();
 
   return (
     <header className="glass-card h-16 flex items-center justify-end px-6 mb-6">
@@ -121,13 +132,6 @@ const Header = () => {
         <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
           <User className="text-white" size={20} />
         </div>
-        <button
-          onClick={handleSignOut}
-          title="Sign out"
-          className="p-2 text-white/60 hover:text-red-400 hover:bg-white/10 rounded-lg transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-        </button>
       </div>
     </header>
   );

@@ -25,7 +25,9 @@ import {
 
 const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (val: boolean) => void }) => {
   const location = useLocation();
-  
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+
   const menuItems = [
     { path: '.', icon: LayoutDashboard, label: 'Dashboard' },
     { path: 'trips', icon: Bus, label: 'Trip Management' },
@@ -43,6 +45,16 @@ const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (val: bool
       return location.pathname === '/admin' || location.pathname === '/admin/';
     }
     return location.pathname === `/admin/${path}`;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AuditService.logLogout();
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (
@@ -66,7 +78,7 @@ const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (val: bool
         </button>
       </div>
 
-      <nav className="p-4 space-y-2 overflow-y-auto max-h-[calc(100vh-80px)]">
+      <nav className="p-4 space-y-2 overflow-y-auto max-h-[calc(100vh-160px)]">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = isItemActive(item.path);
@@ -86,6 +98,16 @@ const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (val: bool
           );
         })}
       </nav>
+
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+        >
+          <LogOut size={20} />
+          {isOpen && <span className="font-medium">Logout</span>}
+        </button>
+      </div>
     </aside>
   );
 };
@@ -94,8 +116,7 @@ const Header = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
-  const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchNotifications();
@@ -222,13 +243,6 @@ const Header = () => {
           <p className="text-white font-medium">{user?.staff.full_name ?? 'Admin User'}</p>
           <p className="text-white/60 text-sm capitalize">{user?.staff.role ?? 'admin'}</p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          title="Logout"
-        >
-          <LogOut className="text-white hover:text-red-400" size={20} />
-        </button>
         <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
           <User className="text-white" size={20} />
         </div>
