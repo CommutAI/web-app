@@ -5,8 +5,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@commutai/auth'
 import App from './App.tsx'
-import './theme/variables.css'
-import './styles/modern-transport.css'
 import './index.css'
 
 const queryClient = new QueryClient({

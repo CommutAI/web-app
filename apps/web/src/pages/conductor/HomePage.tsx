@@ -28,6 +28,7 @@ import {
   LoadingSkeleton, TripTimeline,
 } from "../../ui";
 import { Button, Input, Toast, type ToastColor } from '@commutai/ui';
+import '../styles/modern-transport.css';
 
 // Types
 
