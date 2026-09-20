@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UserPlus, Search, Edit, Trash2, Shield, UserCheck } from 'lucide-react';
-import { supabase } from "@commutai/supabase";
+import { supabase, supabaseAdmin } from "@commutai/supabase";
 import AuditService from "../../services/auditService";
 
 const ManageUsers = () => {
@@ -34,7 +34,7 @@ const ManageUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('staff_users')
         .select('*')
         .order('created_at', { ascending: false });
@@ -53,7 +53,7 @@ const ManageUsers = () => {
     try {
       console.log('Creating user with:', newUser);
 
-      const { data: existingUser } = await supabase
+      const { data: existingUser } = await supabaseAdmin
         .from('staff_users')
         .select('email')
         .eq('email', newUser.email)
@@ -66,7 +66,7 @@ const ManageUsers = () => {
       const userId = crypto.randomUUID();
       console.log('Generated user ID:', userId);
 
-      const { data: rpcData, error: rpcError } = await (supabase.rpc as any)('create_user_direct', {
+      const { data: rpcData, error: rpcError } = await (supabaseAdmin.rpc as any)('create_user_direct', {
         user_id: userId,
         user_email: newUser.email,
         user_password: newUser.password,
@@ -84,7 +84,7 @@ const ManageUsers = () => {
         console.error('RPC Error:', rpcError);
         console.warn('RPC not available, trying standard auth signup...');
 
-        const { data: authData, error: authError } = await supabase.auth.signUp({
+        const { data: authData, error: authError } = await supabaseAdmin.auth.signUp({
           email: newUser.email,
           password: newUser.password,
           options: {
@@ -103,7 +103,7 @@ const ManageUsers = () => {
 
         if (authData?.user?.id) {
           console.log('Creating staff_users record manually for user:', authData.user.id);
-          const { error: staffError } = await (supabase.from('staff_users') as any)
+          const { error: staffError } = await (supabaseAdmin.from('staff_users') as any)
             .insert({
               id: authData.user.id,
               full_name: newUser.full_name,
@@ -114,7 +114,7 @@ const ManageUsers = () => {
 
           if (staffError) {
             console.error('Error creating staff_users record:', staffError);
-            const { error: updateError } = await (supabase.from('staff_users') as any)
+            const { error: updateError } = await (supabaseAdmin.from('staff_users') as any)
               .update({
                 full_name: newUser.full_name,
                 role: newUser.role,
@@ -193,9 +193,13 @@ const ManageUsers = () => {
   const handleConfirmDelete = async () => {
     try {
       if (!selectedUser?.id) throw new Error('No user selected');
+      
+      const { error: authError } = await supabase.auth.admin.deleteUser(selectedUser.id);
 
-      // Note: Auth user deletion requires service role key - must be done server-side
-      // For now, we only delete from staff_users table
+      if (authError) {
+        console.warn('Auth user deletion failed, attempting staff_users deletion:', authError);
+      }
+
       const { error } = await (supabase.from('staff_users') as any)
         .delete()
         .eq('id', selectedUser.id);

@@ -490,13 +490,13 @@ const Dashboard = () => {
 
   const fetchLiveMapData = async () => {
     try {
-      // Fetch only active buses for the Fleet section
+      // Fetch all buses on the route regardless of status — show on map with their current state
       const [
         { data: allBuses },
         { data: activeTrips },
         { data: gpsRows }
       ] = await Promise.all([
-        supabase.from('buses').select('*').eq('status', 'active').order('bus_number', { ascending: true }),
+        supabase.from('buses').select('*').order('bus_number', { ascending: true }),
         supabase.from('trips')
           .select('*, buses(*)')
           .eq('status', 'in_progress')
@@ -929,7 +929,7 @@ const Dashboard = () => {
               <div className="bg-white/5 p-4 rounded-xl">
                 <p className="text-white/60 text-xs">Fleet</p>
                 <p className="text-white text-2xl font-bold">{buses.length}</p>
-                <p className="text-white/40 text-xs mt-1">active buses</p>
+                <p className="text-white/40 text-xs mt-1">total buses</p>
               </div>
               <div className="bg-white/5 p-4 rounded-xl">
                 <p className="text-white/60 text-xs">Passengers</p>
@@ -957,7 +957,7 @@ const Dashboard = () => {
                     <option value="">Select a bus…</option>
                     {buses.map((bus) => (
                       <option key={bus.id} value={bus.id}>
-                        {bus.plate} — {bus.tripId ? '🟢 on trip' : '⚪ available'}
+                        {bus.plate} — {bus.status === 'active' ? '🟢 on trip' : bus.status}
                       </option>
                     ))}
                   </select>

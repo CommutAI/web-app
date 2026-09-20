@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_KEY || '';
 
 if (!supabaseUrl) {
   throw new Error('Missing VITE_SUPABASE_URL environment variable');
@@ -12,6 +13,10 @@ if (!supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Admin client — uses the service role key, bypasses RLS.
+// Only available when VITE_SUPABASE_SERVICE_KEY is set (admin contexts).
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey);
 
 export type Database = {
   public: {
